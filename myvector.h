@@ -77,7 +77,7 @@ void myVector<Type>::double_capacity() {
 
 template <typename Type>
 Type myVector<Type>::at(int const index) {
-    return !(index > (size() - 1)) ? *(array + index) : throw underflow();
+    return !(index > (size() - 1) && index < 0) ? *(array + index) : throw underflow();
 }
 
 template <typename Type>
