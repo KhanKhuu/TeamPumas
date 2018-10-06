@@ -1,19 +1,19 @@
 #ifndef myvector_h
 #define myvector_h
 
+#include <cstring>
+#include <type_traits>
+
 template <typename Type>
 class myVector {
 private:
     Type* array;
-    int array_capacity;
+    int vector_capacity;
     int vector_size;
 public:
     //Constructors
-    myVector(int n = 10, Type value = Type())//:
-    /*vector_size(0),*/
-    /*array_capacity(std::max(1, n))*/ {
-        //array = new Type[array_capacity];
-        initialize(n);
+    myVector(int n = 0, Type value = Type()) {
+        initialize(n + 10);
         if (value) {
             for ( ; n > 0; n--) {
                 push_back(value);
@@ -26,6 +26,7 @@ public:
     
     //Exceptions
     class underflow {};
+    class not_trivially_copyable{};
     
     //Accessors
     Type front() {return !empty() ? array[0] :
@@ -34,24 +35,28 @@ public:
         throw underflow();}
     Type* begin() {return array;}
     Type* end() {return (array + (size() - 1));}
-    int size() {return vector_size;}
-    int capacity() {return array_capacity;}
+    int size() const {return vector_size;}
+    int capacity() {return vector_capacity;}
     bool empty() {return !vector_size;}
-    Type at(int const);
+    Type at(int const) const;
     void clear();
     
     //Mutators
     void push_back(Type const& val);
     Type pop_back();
-    void double_capacity();
+    void increase_capacity();
     void initialize(int n = 10);
-    //myVector& operator=(const myVector&);
+    myVector& operator=(const myVector&);
+    void erase(int);
+    void insert(int, Type);
+    void shrink_to_fit();
+    void resize(int, Type val = Type());
 };
 
 template <typename Type>
 void myVector<Type>::push_back(Type const& val) {
     if (size() == capacity()) {
-        double_capacity();
+        increase_capacity();
     }
     array[vector_size++] = val;
 }
@@ -65,18 +70,16 @@ Type myVector<Type>::pop_back() {
 }
 
 template <typename Type>
-void myVector<Type>::double_capacity() {
-    Type* temp_array = new Type[2 * capacity()];
-    for (int i = 0; i < capacity(); i++) {
-        temp_array[i] = array[i];
-    }
-    delete [] array;
-    array = temp_array;
-    array_capacity *= 2;
+void myVector<Type>::increase_capacity() {
+        Type* temp_array = new Type[1.5 * capacity()];
+        std::is_trivially_copyable<Type>::value ? memcpy(temp_array, array, size() * sizeof(Type)) : throw not_trivially_copyable();
+        delete [] array;
+        array = temp_array;
+        vector_capacity = 1.5 * capacity();
 }
 
 template <typename Type>
-Type myVector<Type>::at(int const index) {
+Type myVector<Type>::at(int const index) const {
     return !(index > (size() - 1) && index < 0) ? *(array + index) : throw underflow();
 }
 
@@ -84,28 +87,98 @@ template <typename Type>
 void myVector<Type>::clear() {
     delete [] array;
     initialize();
-    
-    /*
-    array = new Type[10];
-    vector_size = 0;
-    array_capacity = 10;
-     */
 }
+
 template <typename Type>
 void myVector<Type>::initialize(int n) {
-    array_capacity = std::max(1, n);
-    array = new Type[array_capacity];
+    vector_capacity = std::max(1, n);
+    array = new Type[vector_capacity];
     vector_size = 0;
- 
 }
 
-// Hello underworld
+//void resize()
 
-/*
+
 template <typename Type>
 myVector<Type>& myVector<Type>::operator=(const myVector<Type>& rhs) {
-    myVector newVector;
+    if(this == &rhs)
+        return *this;
+    else {
+        //resize(rhs.size() + 10)
+        //memcpy(this, rhs, rhs.size() * sizeof(Type));
+        clear();
+        for(int i = 0; i < rhs.size(); i++) {
+            push_back(rhs.at(i));
+        }
+    }
+    return *this;
 }
-*/
 
+template <typename Type>
+void myVector<Type>::erase(int position) {
+    memcpy(array +position, array + (position + 1), ((array +(size() - 1) -  array + (position + 1)) * sizeof(Type)));
+    array[size() -1] = Type();
+    vector_size--;
+}
+
+template <typename Type>
+void myVector<Type>::insert(int position, Type value) {
+    if (position > size()) {
+        throw underflow();
+    }
+    else if( position == size()) {
+        push_back(value);
+    }
+    else {
+        if(size() == capacity()) {
+            increase_capacity();
+        }
+        Type *temp_array = new Type[capacity()];
+        std::is_trivially_copyable<Type>::value ? memcpy(temp_array, array, position * sizeof(Type)) : throw not_trivially_copyable();
+        temp_array[position] = value;
+        memcpy(temp_array + (position + 1), array + position, (size() - position) * sizeof(Type));
+        
+        delete [] array;
+        vector_size++;
+        array = temp_array;
+    }
+}
+
+template <typename Type>
+void myVector<Type>::shrink_to_fit() {
+    Type* temp_array = new Type[size()];
+    std::is_trivially_copyable<Type>::value ? memcpy(temp_array, array, size() * sizeof(Type)) : throw not_trivially_copyable();
+    delete [] array;
+    vector_capacity = size();
+    array = temp_array;
+}
+
+template <typename Type>
+void myVector<Type>::resize(int newSize, Type val) {
+    newSize = std::max(0, newSize);
+
+    if(newSize < size()) {
+        Type *temp_array = new Type[newSize + 10];
+        std::is_trivially_copyable<Type>::value ? memcpy(temp_array, array, newSize * sizeof(Type)) : throw not_trivially_copyable();
+        delete array;
+        array = temp_array;
+        vector_capacity = newSize + 10;
+
+    }
+    
+    else if(newSize > size()) {
+        if(newSize > capacity()) {
+            Type *temp_array = new Type[newSize + 10];
+            std::is_trivially_copyable<Type>::value ? memcpy(temp_array, array, newSize * sizeof(Type)) : throw not_trivially_copyable();
+            delete [] array;
+            array = temp_array;
+            vector_capacity = newSize + 10;
+
+        }
+        for(int i = size(); i < newSize; i++) {
+            push_back(val);
+        }
+    }
+    vector_size = newSize;
+}
 #endif /* myvector_h */
