@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <type_traits>
+#include <initializer_list>
 
 template <typename Type>
 class myVector {
@@ -19,6 +20,12 @@ public:
                 push_back(value);
             }
         }
+    }
+    
+    //Copy Constructor
+    myVector(myVector& vectorToCopy) {
+        initialize();
+        *this = vectorToCopy;
     }
     
     //Destructor
@@ -51,6 +58,9 @@ public:
     void insert(int, Type);
     void shrink_to_fit();
     void resize(int, Type val = Type());
+    void swap(myVector<Type>&);
+    void assign(int, const Type&);
+    void assign(std::initializer_list<Type> list);
 };
 
 template <typename Type>
@@ -71,16 +81,16 @@ Type myVector<Type>::pop_back() {
 
 template <typename Type>
 void myVector<Type>::increase_capacity() {
-        Type* temp_array = new Type[1.5 * capacity()];
-        std::is_trivially_copyable<Type>::value ? memcpy(temp_array, array, size() * sizeof(Type)) : throw not_trivially_copyable();
-        delete [] array;
-        array = temp_array;
-        vector_capacity = 1.5 * capacity();
+    Type* temp_array = new Type[1.5 * capacity()];
+    std::is_trivially_copyable<Type>::value ? memcpy(temp_array, array, size() * sizeof(Type)) : throw not_trivially_copyable();
+    delete [] array;
+    array = temp_array;
+    vector_capacity = 1.5 * capacity();
 }
 
 template <typename Type>
 Type myVector<Type>::at(int const index) const {
-    return !(index > (size() - 1) && index < 0) ? *(array + index) : throw underflow();
+    return !(index > (size() - 1) || index < 0) ? *(array + index) : throw underflow();
 }
 
 template <typename Type>
@@ -96,20 +106,19 @@ void myVector<Type>::initialize(int n) {
     vector_size = 0;
 }
 
-//void resize()
-
 
 template <typename Type>
-myVector<Type>& myVector<Type>::operator=(const myVector<Type>& rhs) {
-    if(this == &rhs)
+myVector<Type> &myVector<Type>::operator=(const myVector<Type>& rhs) {
+    if(this == &rhs) {
         return *this;
+    }
     else {
-        //resize(rhs.size() + 10)
-        //memcpy(this, rhs, rhs.size() * sizeof(Type));
         clear();
-        for(int i = 0; i < rhs.size(); i++) {
-            push_back(rhs.at(i));
-        }
+        resize(rhs.size());
+        memcpy(array, rhs.array, (rhs.size() * sizeof(Type)));
+        //for(int i = 0; i < rhs.size(); i++) {
+          //  push_back(rhs.at(i));
+        //}
     }
     return *this;
 }
@@ -156,16 +165,15 @@ void myVector<Type>::shrink_to_fit() {
 template <typename Type>
 void myVector<Type>::resize(int newSize, Type val) {
     newSize = std::max(0, newSize);
-
+    
     if(newSize < size()) {
         Type *temp_array = new Type[newSize + 10];
         std::is_trivially_copyable<Type>::value ? memcpy(temp_array, array, newSize * sizeof(Type)) : throw not_trivially_copyable();
-        delete array;
+        delete [] array;
         array = temp_array;
         vector_capacity = newSize + 10;
-
+        
     }
-    
     else if(newSize > size()) {
         if(newSize > capacity()) {
             Type *temp_array = new Type[newSize + 10];
@@ -173,7 +181,6 @@ void myVector<Type>::resize(int newSize, Type val) {
             delete [] array;
             array = temp_array;
             vector_capacity = newSize + 10;
-
         }
         for(int i = size(); i < newSize; i++) {
             push_back(val);
@@ -181,4 +188,27 @@ void myVector<Type>::resize(int newSize, Type val) {
     }
     vector_size = newSize;
 }
+
+template <typename Type>
+void myVector<Type>::swap(myVector<Type>& inVector) {
+    myVector<Type> tempVector = inVector;
+    inVector = *this;
+    *this = tempVector;
+}
+
+template <typename Type>
+void myVector<Type>::assign(int count, const Type &val) {
+    clear();
+    for (int i = 0; i < count; i++) {
+        push_back(val);
+    }
+}
+
+template <typename Type>
+void myVector<Type>::assign(std::initializer_list<Type> list) {
+    clear();
+    resize(list.size());
+    std::is_trivially_copyable<Type>::value ? memcpy(array, list.begin(), sizeof(Type) * list.size()) : throw not_trivially_copyable();
+}
+
 #endif /* myvector_h */
