@@ -57,6 +57,7 @@ public:
     void increase_capacity();
     void initialize(int n = 10);
     myVector& operator=(const myVector&);
+    Type operator[](const int&);
     void erase(int);
     void insert(int, Type);
     void shrink_to_fit();
@@ -212,6 +213,11 @@ void myVector<Type>::assign(std::initializer_list<Type> list) {
     clear();
     resize(static_cast<int>(list.size()));
     std::is_trivially_copyable<Type>::value ? memcpy(array, list.begin(), sizeof(Type) * list.size()) : throw not_trivially_copyable();
+}
+
+template <typename Type>
+Type myVector<Type>::operator[] (const int& index) {
+    return at(index);
 }
 
 #endif /* myvector_h */
