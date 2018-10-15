@@ -114,6 +114,13 @@ int main() {
     for (int i = 0; i < myVec3.size(); i++) {
         cout << myVec3.at(i) << " ";
     }
+    cout << endl;
+    
+    myVector<int> myVec10 = {2, 4, 6, 8, 10, 12, 14, 16, 18, 20};
+    for (int i = 0; i < myVec10.size(); i++) {
+        cout << myVec10.at(i) << " ";
+    }
+    cout << endl;
     
     /*
     myVector<int> myVec7(10, 12);
