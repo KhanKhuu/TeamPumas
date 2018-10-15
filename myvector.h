@@ -22,10 +22,13 @@ public:
         }
     }
     
-    //Copy Constructor
+    //Copy Constructors
     myVector(myVector& vectorToCopy) {
         initialize();
         *this = vectorToCopy;
+    }
+    myVector(std::initializer_list<Type> list) {
+        assign(list);
     }
     
     //Destructor
@@ -207,8 +210,7 @@ void myVector<Type>::assign(int count, const Type &val) {
 template <typename Type>
 void myVector<Type>::assign(std::initializer_list<Type> list) {
     clear();
-    resize(static_cast<int>(list.size()));  //list.size() returns an unsigned int, static casting to int 
-                                            //in order to pass the proper data type to resize
+    resize(static_cast<int>(list.size()));
     std::is_trivially_copyable<Type>::value ? memcpy(array, list.begin(), sizeof(Type) * list.size()) : throw not_trivially_copyable();
 }
 
