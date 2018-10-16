@@ -65,6 +65,7 @@ public:
     void swap(myVector<Type>&);
     void assign(int, const Type&);
     void assign(std::initializer_list<Type> list);
+    //void reserve(const int); // needs to be tested
 };
 
 template <typename Type>
@@ -217,7 +218,23 @@ void myVector<Type>::assign(std::initializer_list<Type> list) {
 
 template <typename Type>
 Type myVector<Type>::operator[] (const int& index) {
-    return at(index);
+    return array[index];
 }
+
+// did not test it yet, as I am dowloading and installing VS too long :)
+/*
+template <typename Type>
+void myVector<Type>::reserve (const int n) {
+// function will cause reallocation only in case the requested capacity is bigger than the current vector_capacity
+// ignores all other cases (if it is smaller, or equal)
+    if(n > capacity()) {
+        Type* temp_array = new Type[n];
+        std::is_trivially_copyable<Type>::value ? memcpy(temp_array, array, size() * sizeof(Type)) : throw not_trivially_copyable();
+        delete [] array;
+        array = temp_array;
+        vector_capacity = n;
+    }
+ }
+*/
 
 #endif /* myvector_h */
