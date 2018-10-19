@@ -218,7 +218,7 @@ void myVector<Type>::assign(std::initializer_list<Type> list) {
 
 template <typename Type>
 Type myVector<Type>::operator[] (const int& index) {
-    return array[index];
+    return array.at(index);
 }
 
 // did not test it yet, as I am dowloading and installing VS too long :)
