@@ -1,12 +1,12 @@
-/****************************************************************
+/********************************************************************
  Problem: Assignment 6 - Merge Sort
- Question: Implement the merge sort algorithm using the mergeSort
- code provided in lecture.
+ Question: Implement the merge sort algorithm using built-in arrays,
+ and the mergeSort code structure provided in lecture.
  Name: Team Pumas (Matthew Larkins and Michaela Vuklisevicova)
  ID: 1687673 & 1583978
  Date: 10/20/2018
  Status: complete
- ****************************************************************/
+ *******************************************************************/
 
 #include <cstring>
 #include <iostream>
