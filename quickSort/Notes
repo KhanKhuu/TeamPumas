@@ -1,0 +1,107 @@
+Y Liang C++ book
+
+In exam, DO NOT LEAVE CANVAS
+Questions will be about understanding these algorithms, the data structures we've built...if there is coding, it will be small like fix this or addd something to make this worl
+The majority will be understanding algorithms
+
+
+QuickSort
+    Tony Hoare - inverntor
+    Divide and conquer
+    partition array into two regions
+        Samll items moved left
+        Large moved right
+    After partitioning, repeat the sort on both sides
+Common technique: use the first item in the region as a pivot:
+    everything less than the piveot goes left, ecverything else right
+
+Outline:
+qsort(a, lower, upper):
+    if lower < upper
+        mid = partition(a, lower, upper) //returns location of the boundary between subregions
+        qsort(a, lower, mid)
+        qsort(a, mid+1, upper)
+
+Worst case: pivot is the  unique minimum or maximum element
+One of L and G has size n - 1 and the other has size 0
+The running time is proportional to the sum
+
+Good call-> the sizes of L and G are less than 3/4
+Bad call-> L or G has size > 3/4
+A call with probability 1/2 -> 1/2 of the numbers produce a good call
+The expected number of coin toses required to get k is 2k
+For a node of depth i, we expect
+    i/2 ancestors are good calls
+    The size of input sequence for the current call is at most (3/4)^i/2n
+    Expected height of quicksort tree is )Logn
+Amount of work at each node is
+Partition
+    Check every item once (O)n O(n)
+Conquer
+    Divide data in half O(log2n)
+Total   Product - O(nlogn)
+
+Same as heapsort/mergesort
+    quicksort is generally faster
+But there's a catch
+
+What happens if we run quicksort on already sorted?
+    n*n
+    ie n^2
+    Because each partition produces a problem of size 0 and one of size n-1
+    Number of partitions n each needing time O(n)
+    therefore n^2
+
+Is there any wat to ensure better performance?
+Hoare: Choose 1st element
+Lomuto: partition around last element
+
+choos a different pivot so that the partitions are equal, then we will see O(nLogn) time
+
+Take 2 positions and choose median (1st, middle, last)
+for an already sorted list, you get the perfect division every time! therefore no n^2 problem for already sorted data
+    and it helps with unsorted data, too
+        TAKING THE MEDIAN THIS WAY IS GENERALLY THE BEST WAY TO CHOOSE A PIVOT -> Particularly when the data is already sorted
+Another option: Randomly choose a pivot
+    On average, sorted data is divided evenly
+    O(nlogn) time
+KEY REQUIREMENT: Pivot choice must take O(1) time
+
+Never guaranteed nLogn time with quicksort (we want it, but it is not possible to guarantee it)
+    In fact, there is always a possibilty given random data that quicksort will take n^2 time
+
+
+
+Perform the partition using two indices to split s and l and EUG (a similar method can split E U G into E and G
+
+Repeat until J and K cross
+    Scan J to the right until finding el >=x
+    Scan K to left until el < x
+swap elements at indices j and K
+
+
+Sum
+
+
+                Worst       Expected        Extra Memory
+Insertion       n^2         On^2            O(1)
+Merge           nlgn        nlgn            n
+Quick           n^2         nlgn            1
+Heap            nlgn        nlgn            1
+
+
+Merge sort has constant O(nlogn)
+    Stable
+Quick sort has expected nLogn and worst time n^2
+    Unstable
+
+Why use quick sort?
+    cache utilization
+    processor optimizations
+    File IO in relation to large data
+
+EX Yahoo
+    1,000,000 record file
+    8KB pages
+    100 bytes/record
+    Use merge sort to take advantage of disk IO
