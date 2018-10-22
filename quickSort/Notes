@@ -1,19 +1,18 @@
-Y Liang C++ book
-
-In exam, DO NOT LEAVE CANVAS
-Questions will be about understanding these algorithms, the data structures we've built...if there is coding, it will be small like fix this or addd something to make this worl
-The majority will be understanding algorithms
+In exam, DO NOT LEAVE CANVAS (exam will close if you leave the page)
+Questions will be about understanding these algorithms, the data structures we've built
+    If there is coding, it will be small (like fix this or add something to make this work)
+    The majority will be understanding algorithms
 
 
 QuickSort
     Tony Hoare - inverntor
-    Divide and conquer
-    partition array into two regions
-        Samll items moved left
-        Large moved right
-    After partitioning, repeat the sort on both sides
+    Divide and conquer algorithm (like MergeSort)
+        1) Partition array into two regions
+        2) Small items moved to the left of the pivot
+        3) Large items moved right
+        4) After partitioning, repeat the sort on both sides
 Common technique: use the first item in the region as a pivot:
-    everything less than the piveot goes left, ecverything else right
+    everything less than the piveot goes left, everything else goes right
 
 Outline:
 qsort(a, lower, upper):
@@ -29,37 +28,38 @@ The running time is proportional to the sum
 Good call-> the sizes of L and G are less than 3/4
 Bad call-> L or G has size > 3/4
 A call with probability 1/2 -> 1/2 of the numbers produce a good call
-The expected number of coin toses required to get k is 2k
+
 For a node of depth i, we expect
     i/2 ancestors are good calls
     The size of input sequence for the current call is at most (3/4)^i/2n
-    Expected height of quicksort tree is )Logn
-Amount of work at each node is
+    Expected height of quicksort tree is O(Logn)
+
 Partition
-    Check every item once (O)n O(n)
+    Check every item once (O)n
 Conquer
-    Divide data in half O(log2n)
-Total   Product - O(nlogn)
+    Divide data in half O(Log_2n)
+Total   Product -> O(nLog_2n)
 
 Same as heapsort/mergesort
     quicksort is generally faster
 But there's a catch
 
 What happens if we run quicksort on already sorted?
-    n*n
-    ie n^2
+    IF we start with the first element:
+        O(n*n)
+            ie n^2
     Because each partition produces a problem of size 0 and one of size n-1
     Number of partitions n each needing time O(n)
     therefore n^2
 
-Is there any wat to ensure better performance?
-Hoare: Choose 1st element
-Lomuto: partition around last element
+Is there any way to ensure better performance?
+    Hoare: Choose 1st element
+    Lomuto: partition around last element
 
-choos a different pivot so that the partitions are equal, then we will see O(nLogn) time
+Best Case: Choose a different pivot so that the partitions are equal, then we will see O(nLogn) time
 
 Take 2 positions and choose median (1st, middle, last)
-for an already sorted list, you get the perfect division every time! therefore no n^2 problem for already sorted data
+    For an already sorted list, you get the perfect division every time! therefore no n^2 problem for already sorted data
     and it helps with unsorted data, too
         TAKING THE MEDIAN THIS WAY IS GENERALLY THE BEST WAY TO CHOOSE A PIVOT -> Particularly when the data is already sorted
 Another option: Randomly choose a pivot
@@ -72,36 +72,41 @@ Never guaranteed nLogn time with quicksort (we want it, but it is not possible t
 
 
 
-Perform the partition using two indices to split s and l and EUG (a similar method can split E U G into E and G
+Perform the partition using two indices to split S and L and E U G (a similar method can split E U G into E and G
 
 Repeat until J and K cross
-    Scan J to the right until finding el >=x
+    Scan J to the right until finding el >= x
     Scan K to left until el < x
 swap elements at indices j and K
 
 
-Sum
-
+Performance of Various Sorting Algorithms
 
                 Worst       Expected        Extra Memory
-Insertion       n^2         On^2            O(1)
-Merge           nlgn        nlgn            n
-Quick           n^2         nlgn            1
-Heap            nlgn        nlgn            1
+Insertion       n^2         n^2             O(1)
+Merge           nlgn        nlgn            O(n)
+Quick           n^2         nlgn            O(1)
+Heap            nlgn        nlgn            O(1)
 
 
 Merge sort has constant O(nlogn)
     Stable
-Quick sort has expected nLogn and worst time n^2
+Quick sort has expected O(nLogn) and worst time n^2
     Unstable
 
 Why use quick sort?
-    cache utilization
+    Cache utilization
     processor optimizations
     File IO in relation to large data
+        Therefore, slower on paper but faster in reality 
 
 EX Yahoo
     1,000,000 record file
     8KB pages
     100 bytes/record
     Use merge sort to take advantage of disk IO
+    
+    
+Miscellaneous Notes: 
+    Y Liang, author of one of the best C++ books according to Prof Elkady
+
