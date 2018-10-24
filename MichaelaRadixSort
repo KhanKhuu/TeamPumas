@@ -1,0 +1,51 @@
+#include <cmath>
+#include <ctgmath>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void myRadixSort(vector<int> &list) {
+	vector<vector<int>> bucket(10);
+	bool allZeroes = true;
+	for (int i = 1; allZeroes; i *= 10) {
+		allZeroes = false;
+		for (int j : list) {  // goes through the original list of numbers
+			int value = abs(j) / i % 10;
+			bucket.at(value).push_back(j);
+			allZeroes += j / (i * 10);
+		}
+		list.clear();
+		for (vector<int> &k : bucket) {
+			list.insert(list.end(), k.begin(), k.end());
+			k.clear();
+		}
+	}
+
+	//checking for negative values and transfering them to the beggining of the list
+	// must reverse the negative values to ensure they are in ascending order
+	vector<int> negativeValues;
+	for (int m = 0; m < list.size(); m++) {
+		if (list.at(m) < 0) {
+			negativeValues.push_back(list.at(m));
+			list.erase(list.begin()+m);
+			m--;
+		}
+	}
+	list.insert(list.begin(), negativeValues.rbegin(), negativeValues.rend());
+}
+
+int main() {
+	vector<int> a = { 456, -567, 231, 9876, -2391, 42, 1, -5};
+	cout << "Unsorted:" << endl;
+	for (int i : a) {
+		cout << i << " ";
+	}
+	cout << endl;
+
+	myRadixSort(a);
+	cout << "Sorted:" << endl;
+	for (int i : a) {
+		cout << i << " ";
+	}
+	cout << endl;
+}
