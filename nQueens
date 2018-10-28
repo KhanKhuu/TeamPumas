@@ -54,7 +54,7 @@ bool placeQueen(myVector<myVector<bool>> &board, const int n, int &row, int col 
 	board.push_back(myVector<bool>(n, 0));
 	for (; col < n && !queenPlaced; col++) {
 		if (check(board, row, col, n)) {
-			board.at(row).at(col) = true;
+			board.at(row).insert(col, true);
 			queenPlaced = true;
 		}
 	}
